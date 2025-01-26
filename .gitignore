@@ -1,0 +1,17 @@
+.env
+
+index.php
+
+volumes/
+
+images/
+
+*.log
+
+.vscode/
+.idea/
+
+node_modules/
+
+*.bak
+*.swp
