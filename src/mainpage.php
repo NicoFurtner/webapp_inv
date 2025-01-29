@@ -52,17 +52,36 @@ $investment_count = $query->fetchColumn();
   <div class="col-8">
     <div data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true" class="scrollspy-example" tabindex="0">
       <h4 id="list-item-1">Investments</h4>
-      <?php if ($investment_count <= 0) {
-        $noinv= "Keine Investments vorhanden!";
+      <?php if ($investment_count <= 0): ?> 
+        <p>Keine Investments vorhanden!</p>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Investment hinzufügen
+                </button>
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Füge deine Investments hinzu</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
+                        <button type="button" class="btn btn-primary">Speichern</button>
+                    </div>
+                    </div>
+                </div>
+                </div>
         
-        }; 
-      ?>
-      <p></p>
-      <h4 id="list-item-2">Item 2</h4>
+      <?php endif; ?>
+      
+      <h4 id="list-item-2">Überblick</h4>
       <p><br><br><br><br><br><br><br><br><br><br>asdf<br><br><br><br><br><br><br><br><br><br>asdf<br><br><br><br><br><br><br><br><br><br>asdf</p>
-      <h4 id="list-item-3">Item 3</h4>
+      <h4 id="list-item-3">Live</h4>
       <p><br><br><br><br><br><br><br><br><br><br>asdf<br><br><br><br><br><br><br><br><br><br>asdf<br><br><br><br><br><br><br><br><br><br>asdf</p>
-      <h4 id="list-item-4">Item 4</h4>
+      <h4 id="list-item-4">Test</h4>
       <p><br><br><br><br><br><br><br><br><br><br>asdf<br><br><br><br><br><br><br><br><br><br>asdf<br><br><br><br><br><br><br><br><br><br>asdf</p>
     </div>
   </div>
