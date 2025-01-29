@@ -63,8 +63,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "<div class='mt-2'>$login_link</div>";
         }
         ?>
-    </div>
+        <br><p><a href="login.php">Bereits ein Konto erstellt?</a></p>
 
+    </div>
+    
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
