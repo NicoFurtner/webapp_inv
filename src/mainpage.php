@@ -13,8 +13,9 @@ $query = $pdo->prepare("SELECT COUNT(*) FROM investment WHERE user_id = ?");
 $query->execute([$user_id]);
 $investment_count = $query->fetchColumn();
 
-
-
+$query = $pdo ->prepare("SELECT * FROM investment WHERE user_id = :user_id");
+$query->execute([':user_id' => $user_id]);
+$investments = $query->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -51,33 +52,50 @@ $investment_count = $query->fetchColumn();
   </div>
   <div class="col-8">
     <div data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true" class="scrollspy-example" tabindex="0">
-      <h4 id="list-item-1">Investments</h4>
-      <?php if ($investment_count <= 0): ?> 
-        <p>Keine Investments vorhanden!</p>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Investment hinzufügen
-                </button>
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Füge deine Investments hinzu</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        ...
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
-                        <button type="button" class="btn btn-primary">Speichern</button>
-                    </div>
-                    </div>
+    <h4 id="list-item-1">Investments</h4>
+    <?php if ($investment_count <= 0): ?> 
+        <p>Keine Investments vorhanden!</p><br>
+        <p>Füge mehrere Investments hinzu, um einen Überblick zu erhalten:</p><br>
+    
+    <?php else: ?>
+        <?php foreach ($investments as $investment): ?>
+        <p>
+            Investment-Typ: <?php echo $investment['investment_type']; ?><br>
+            Betrag: <?php echo number_format($investment['amount'], 2, ',', '.'); ?> €<br>
+            Datum: <?php echo date('d.m.Y', strtotime($investment['investment_date'])); ?>
+            </p>
+        <?php endforeach; ?>
+    <?php endif; ?> 
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Investment hinzufügen
+    </button>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Füge deine Investments hinzu</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+                <div class="modal-body">
+                <form method="POST" action="investment.php">
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Welches Investment</label>
+                    <input type="text" class="form-control" id="formGroupExampleInput" name="investment_type" placeholder="Bitcoin, Solana, Ethereum, Gold,... " required>
                 </div>
-        
-      <?php endif; ?>
-      
-      <h4 id="list-item-2">Überblick</h4>
+                <div class="mb-3">
+                    <label for="formGroupExampleInput2" class="form-label">Betrag in €</label>
+                    <input type="number" step="0.01" class="form-control" id="formGroupExampleInput2" name="amount" placeholder="100.12" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
+                <button type="submit" class="btn btn-primary">Speichern</button>
+                </div>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+      <h4 id="list-item-2"><br>Überblick</h4>
       <p><br><br><br><br><br><br><br><br><br><br>asdf<br><br><br><br><br><br><br><br><br><br>asdf<br><br><br><br><br><br><br><br><br><br>asdf</p>
       <h4 id="list-item-3">Live</h4>
       <p><br><br><br><br><br><br><br><br><br><br>asdf<br><br><br><br><br><br><br><br><br><br>asdf<br><br><br><br><br><br><br><br><br><br>asdf</p>
