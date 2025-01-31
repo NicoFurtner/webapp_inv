@@ -16,6 +16,8 @@ $investment_count = $query->fetchColumn();
 $query = $pdo ->prepare("SELECT * FROM investment WHERE user_id = :user_id");
 $query->execute([':user_id' => $user_id]);
 $investments = $query->fetchAll();
+
+
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -64,7 +66,7 @@ $investments = $query->fetchAll();
             <?php foreach ($investments as $investment): ?>
                 <div class="col-md-3 mb-3"> 
                     <div class="card text-white bg-light p-2">
-                        <form method="POST" action="deleteinvestment.php" onsubmit="return confirm('Bist du sicher, dass du dieses Investment löschen möchtest?');">
+                        <form method="POST" action="deleteinvestment.php">
                             <input type="hidden" name="investment_id" value="<?php echo $investment['id']; ?>">
                             <button type="submit" class="btn btn-outline-danger">Entfernen</button>
                         </form>
@@ -78,14 +80,21 @@ $investments = $query->fetchAll();
             <?php endforeach; ?>
         </div>
         </div>
-
-        
     <?php endif; ?>
     <br><br>  
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
         Investment hinzufügen
     </button>
-    
+    <br><br>
+    <?php if (isset($_SESSION['message'])) {
+        echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
+        unset($_SESSION['message']); 
+    }
+    if (isset($_SESSION['error'])) {
+        echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error'] . '</div>';
+        unset($_SESSION['error']); 
+    }
+    ?>
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
