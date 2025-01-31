@@ -59,17 +59,33 @@ $investments = $query->fetchAll();
         <p>Füge mehrere Investments hinzu, um einen Überblick zu erhalten:</p><br>
     
     <?php else: ?>
-        <?php foreach ($investments as $investment): ?>
-        <p>
-            Investment-Typ: <?php echo $investment['investment_type']; ?><br>
-            Betrag: <?php echo number_format($investment['amount'], 2, ',', '.'); ?> €<br>
-            Datum: <?php echo date('d.m.Y', strtotime($investment['investment_date'])); ?>
-            </p>
-        <?php endforeach; ?>
-    <?php endif; ?> 
+        <div class="container">
+        <div class="row">
+            <?php foreach ($investments as $investment): ?>
+                <div class="col-md-3 mb-3"> 
+                    <div class="card text-white bg-light p-2">
+                        <form method="POST" action="deleteinvestment.php" onsubmit="return confirm('Bist du sicher, dass du dieses Investment löschen möchtest?');">
+                            <input type="hidden" name="investment_id" value="<?php echo $investment['id']; ?>">
+                            <button type="submit" class="btn btn-outline-danger">Entfernen</button>
+                        </form>
+                        <p class="text-center text-dark">
+                            <?php echo htmlspecialchars($investment['investment_type']); ?><br>
+                            <?php echo number_format($investment['amount'], 2, ',', '.'); ?> €<br>
+                            <?php echo date('d.m.Y', strtotime($investment['investment_date'])); ?>
+                        </p>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        </div>
+
+        
+    <?php endif; ?>
+    <br><br>  
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
         Investment hinzufügen
     </button>
+    
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
