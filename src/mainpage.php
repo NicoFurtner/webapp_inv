@@ -41,6 +41,7 @@ $investments = $query->fetchAll();
     </div>
 </nav>
 <br>
+
 <div class="row">
   <div class="col-4">
   <div id="list-example" class="list-group position-sticky" style="top: 80px;">
@@ -84,11 +85,12 @@ $investments = $query->fetchAll();
                 </div>
                 <div class="mb-3">
                     <label for="formGroupExampleInput2" class="form-label">Betrag in €</label>
-                    <input type="number" step="0.01" class="form-control" id="formGroupExampleInput2" name="amount" placeholder="100.12" required>
+                    <input type="number" step="0.01" class="form-control" min="0.01" step="0.01" id="formGroupExampleInput2" name="amount" placeholder="100.12" required>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
-                <button type="submit" class="btn btn-primary">Speichern</button>
+                    <button type="submit" class="btn btn-primary">Speichern</button>
                 </div>
                 </form>
                 </div>
