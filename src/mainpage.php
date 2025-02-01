@@ -3,19 +3,24 @@ session_start();
 
 require_once 'db.php';
 
+// Überprüfen ob ein username gesetzt ist (also ein Benutzer eingeloggt ist) --> wenn nicht dann zurück zu login page
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
 }
 
+// Benutzer id speichern um investment tabelle abzufragen
 $user_id = $_SESSION['user_id'];
-$query = $pdo->prepare("SELECT COUNT(*) FROM investment WHERE user_id = ?");
-$query->execute([$user_id]);
-$investment_count = $query->fetchColumn();
 
+// Investment Tabelle abfragen --> Anzahl der investments
+$query = $pdo->prepare("SELECT COUNT(*) FROM investment WHERE user_id = ?");
+$query->execute([$user_id]); // sql Abrfage ausführen
+$investment_count = $query->fetchColumn(); // erste Spalte des Ergebnisses zurückgeben (Anzahl des investments)
+
+// Die Details abfragen der investment Tabelle 
 $query = $pdo ->prepare("SELECT * FROM investment WHERE user_id = :user_id");
-$query->execute([':user_id' => $user_id]);
-$investments = $query->fetchAll();
+$query->execute([':user_id' => $user_id]); // sql Abfrage ausführen
+$investments = $query->fetchAll(); // Zeilen als Array speichern, dann kann man alles Abfragen später mit z.B. $investment['amount']
 
 
 ?>
@@ -28,7 +33,7 @@ $investments = $query->fetchAll();
     <title>Main-Page</title>
 </head>
 <body>
-
+<!-- navbar aus bootstrap-->
 <nav class="navbar navbar-expand-lg bg-body-tertiary position-sticky top-0">
     <div class="container-fluid">
         <a class="navbar-brand" href="logout.php">INVESTY</a>
@@ -43,7 +48,7 @@ $investments = $query->fetchAll();
     </div>
 </nav>
 <br>
-
+<!-- links "navbar" zum scrollen -->
 <div class="row">
   <div class="col-4">
   <div id="list-example" class="list-group position-sticky" style="top: 80px;">
@@ -63,7 +68,7 @@ $investments = $query->fetchAll();
     <?php else: ?>
         <div class="container">
         <div class="row">
-            <?php foreach ($investments as $investment): ?>
+            <?php foreach ($investments as $investment): ?> <!-- Iteriert über jedes Element des Arrays invstment -->
                 <div class="col-md-3 mb-3"> 
                     <div class="card text-white bg-light p-2">
                         <form method="POST" action="deleteinvestment.php">
@@ -87,7 +92,7 @@ $investments = $query->fetchAll();
     </button>
     <br><br>
     <?php 
-    if (isset($_SESSION['message'])) {
+    if (isset($_SESSION['message'])) { // Ausgabe aus deleteinvestment.php (wenn investment löschen erfolgreich war oder nicht)
         echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
         unset($_SESSION['message']); 
     }
@@ -130,20 +135,21 @@ $investments = $query->fetchAll();
     }
     /*
         In else gebe ich mir den Kurs aus vom aktuellen investment_type des users
+        Damit ich es verstehe mehr, jede Zeile Dokumentiert
     */
     else {
-        $investment_type = strtolower($investment['investment_type']); 
+        $investment_type = strtolower($investment['investment_type']); // Wert des investment_type in Kleinbuchstabten
         $currency = 'eur'; 
 
-        $api_url = 'https://api.coingecko.com/api/v3/simple/price?ids=' . $investment_type . '&vs_currencies=' . $currency; 
-       
-        
-        $response = file_get_contents($api_url);
+        $api_url = 'https://api.coingecko.com/api/v3/simple/price?ids=' . $investment_type . '&vs_currencies=eur'; 
+        // Erstellt die URL für API-Anfrage an "CoinCecko", ids= ist dabei der Parameter, mit dem ich dann die Kryptowähr. angebe, &vs_currencies=eur gibt an, dass ich es mit EUR anzeigen möchte. 
 
-        if ($response !== FALSE) {
-            $data = json_decode($response, true);
-            if (isset($data[$investment_type][$currency])) {
-                $crypto_price = $data[$investment_type][$currency];
+        $response = file_get_contents($api_url); // HTTP Anfrage wird gespeichert als String (enthält JSON Antwort von CoinGecko)
+
+        if ($response !== FALSE) { // Überprüfen, ob API-Anfrage erfolgreich war.
+            $data = json_decode($response, true); // Hier wird die JSON ausgabe umgewandelt in PHP Array (zweiter Param true = Array)
+            if (isset($data[$investment_type][$currency])) { // Schaut ob Währungstyp investment_type und currency in $data vorhanden ist
+                $crypto_price = $data[$investment_type][$currency]; // falls ja, speichert den Kurs
                 echo "<br><b>Aktueller Kurs von " . ucfirst($investment_type) . ":</b> €" . number_format($crypto_price, 2, ',', '.') . " EUR";
             } else {
                 echo "<br><b>Kurs nicht verfügbar</b>";
