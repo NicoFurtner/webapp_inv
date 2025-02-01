@@ -31,7 +31,7 @@ $investments = $query->fetchAll();
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary position-sticky top-0">
     <div class="container-fluid">
-        <a class="navbar-brand" href="index.php">INVESTY</a>
+        <a class="navbar-brand" href="logout.php">INVESTY</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -50,14 +50,14 @@ $investments = $query->fetchAll();
       <a class="list-group-item list-group-item-action" href="#list-item-1">Investments</a>
       <a class="list-group-item list-group-item-action" href="#list-item-2">Überblick</a>
       <a class="list-group-item list-group-item-action" href="#list-item-3">Live</a>
-      <a class="list-group-item list-group-item-action" href="#list-item-4">Item 4</a>
+      <a class="list-group-item list-group-item-action" href="#list-item-4">In Arbeit</a>
     </div>
   </div>
   <div class="col-8">
     <div data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true" class="scrollspy-example" tabindex="0">
     <h4 id="list-item-1">Investments</h4>
     <?php if ($investment_count <= 0): ?> 
-        <p>Keine Investments vorhanden!</p><br>
+        <p>Keine Investments vorhanden!</p>
         <p>Füge mehrere Investments hinzu, um einen Überblick zu erhalten:</p><br>
     
     <?php else: ?>
@@ -86,7 +86,8 @@ $investments = $query->fetchAll();
         Investment hinzufügen
     </button>
     <br><br>
-    <?php if (isset($_SESSION['message'])) {
+    <?php 
+    if (isset($_SESSION['message'])) {
         echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
         unset($_SESSION['message']); 
     }
@@ -122,11 +123,45 @@ $investments = $query->fetchAll();
             </div>
         </div>
     </div>
-      <h4 id="list-item-2"><br>Überblick</h4>
+    <h4 id="list-item-2"><br>Überblick</h4>
+    <?php 
+    if ($investment_count <= 0) {
+        echo "Keine Investments vorhanden!";
+    }
+    /*
+        In else gebe ich mir den Kurs aus vom aktuellen investment_type des users
+    */
+    else {
+        $investment_type = strtolower($investment['investment_type']); 
+        $currency = 'eur'; 
+
+        $api_url = 'https://api.coingecko.com/api/v3/simple/price?ids=' . $investment_type . '&vs_currencies=' . $currency; 
+       
+        
+        $response = file_get_contents($api_url);
+
+        if ($response !== FALSE) {
+            $data = json_decode($response, true);
+            if (isset($data[$investment_type][$currency])) {
+                $crypto_price = $data[$investment_type][$currency];
+                echo "<br><b>Aktueller Kurs von " . ucfirst($investment_type) . ":</b> €" . number_format($crypto_price, 2, ',', '.') . " EUR";
+            } else {
+                echo "<br><b>Kurs nicht verfügbar</b>";
+            }
+        } else {
+            echo "<br><b>Fehler beim Abrufen des Kurses</b>";
+        }
+    }
+
+        ?>
+
+
+       
+    
       <p><br><br><br><br><br><br><br><br><br><br>asdf<br><br><br><br><br><br><br><br><br><br>asdf<br><br><br><br><br><br><br><br><br><br>asdf</p>
       <h4 id="list-item-3">Live</h4>
       <p><br><br><br><br><br><br><br><br><br><br>asdf<br><br><br><br><br><br><br><br><br><br>asdf<br><br><br><br><br><br><br><br><br><br>asdf</p>
-      <h4 id="list-item-4">Test</h4>
+      <h4 id="list-item-4">In Arbeit</h4>
       <p><br><br><br><br><br><br><br><br><br><br>asdf<br><br><br><br><br><br><br><br><br><br>asdf<br><br><br><br><br><br><br><br><br><br>asdf</p>
     </div>
   </div>
