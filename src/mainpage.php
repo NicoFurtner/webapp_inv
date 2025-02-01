@@ -98,11 +98,11 @@ $investments = $query->fetchAll(); // Zeilen als Array speichern, dann kann man 
     <br>
     <?php 
     if (isset($_SESSION['message'])) { // Ausgabe aus deleteinvestment.php (wenn investment löschen erfolgreich war oder nicht)
-        echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
+        echo '<br><div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
         unset($_SESSION['message']); 
     }
     if (isset($_SESSION['error'])) {
-        echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error'] . '</div>';
+        echo '<br><div class="alert alert-danger" role="alert">' . $_SESSION['error'] . '</div>';
         unset($_SESSION['error']); 
     }
     ?>
@@ -162,6 +162,7 @@ $investments = $query->fetchAll(); // Zeilen als Array speichern, dann kann man 
                 if (isset($data[$investment_type][$currency])) {
                     $crypto_price = $data[$investment_type][$currency]; // Den aktuellen Kurs speichern
                     echo "<br><b>Aktueller Kurs von " . ucfirst($investment_type) . ":</b> €" . number_format($crypto_price, 2, ',', '.') . " EUR";
+                    echo "<br><b>Dein Investment: </b>€". $investment['amount'] . "<b> EUR in " . ucfirst($investment_type) . ": </b>" . round($investment['amount'] / $crypto_price, 8) . "<hr>";
                 } else {
                     echo "<br><b>Kurs von " . ucfirst($investment_type) . " nicht verfügbar</b>";
                 }
