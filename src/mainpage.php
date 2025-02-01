@@ -109,7 +109,7 @@ $investments = $query->fetchAll(); // Zeilen als Array speichern, dann kann man 
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                <form method="POST" action="investment.php">
+                <form method="POST" action="investment.php"> <!-- POST HTTP Anfrage um Formulardaten zu senden an investment.php -->
                 <div class="mb-3">
                     <label for="formGroupExampleInput" class="form-label">Welches Investment</label>
                     <input type="text" class="form-control" id="formGroupExampleInput" name="investment_type" placeholder="Bitcoin, Solana, Ethereum, Gold,... " required>
@@ -138,32 +138,34 @@ $investments = $query->fetchAll(); // Zeilen als Array speichern, dann kann man 
         Damit ich es verstehe mehr, jede Zeile Dokumentiert
     */
     else {
-        $investment_type = strtolower($investment['investment_type']); // Wert des investment_type in Kleinbuchstabten
+        //  alle Investmenttypen, die  Nutzer hat
+        $investment_types = array_map(function($investment) {
+            return strtolower($investment['investment_type']);
+        }, $investments);
         $currency = 'eur'; 
-
-        $api_url = 'https://api.coingecko.com/api/v3/simple/price?ids=' . $investment_type . '&vs_currencies=eur'; 
-        // Erstellt die URL für API-Anfrage an "CoinCecko", ids= ist dabei der Parameter, mit dem ich dann die Kryptowähr. angebe, &vs_currencies=eur gibt an, dass ich es mit EUR anzeigen möchte. 
-
-        $response = file_get_contents($api_url); // HTTP Anfrage wird gespeichert als String (enthält JSON Antwort von CoinGecko)
+        // Erstelle eine API URL mit allen Investmenttypen in einer Anfrage
+        $api_url = 'https://api.coingecko.com/api/v3/simple/price?ids=' . implode(',', $investment_types) . '&vs_currencies=' . $currency;
+        // Die IDs der Kryptowährungen werden durch Kommas getrennt an die URL angehängt, um sie alle gleichzeitig abzufragen.
+        $response = file_get_contents($api_url); // Die API Anfrage wird als String gespeichert (JSON Antwort von CoinGecko)
 
         if ($response !== FALSE) { // Überprüfen, ob API-Anfrage erfolgreich war.
-            $data = json_decode($response, true); // Hier wird die JSON ausgabe umgewandelt in PHP Array (zweiter Param true = Array)
-            if (isset($data[$investment_type][$currency])) { // Schaut ob Währungstyp investment_type und currency in $data vorhanden ist
-                $crypto_price = $data[$investment_type][$currency]; // falls ja, speichert den Kurs
-                echo "<br><b>Aktueller Kurs von " . ucfirst($investment_type) . ":</b> €" . number_format($crypto_price, 2, ',', '.') . " EUR";
-            } else {
-                echo "<br><b>Kurs nicht verfügbar</b>";
+            $data = json_decode($response, true); // Hier wird die JSON-Ausgabe in ein PHP-Array umgewandelt (zweiter Parameter true = Array)
+            foreach ($investments as $investment) {
+                $investment_type = strtolower($investment['investment_type']); // Wert des investment_type in Kleinbuchstaben
+
+                // Prüfen, ob Antwort füür den aktuellen Investment-Typ und die Währung verfügbar ist
+                if (isset($data[$investment_type][$currency])) {
+                    $crypto_price = $data[$investment_type][$currency]; // Den aktuellen Kurs speichern
+                    echo "<br><b>Aktueller Kurs von " . ucfirst($investment_type) . ":</b> €" . number_format($crypto_price, 2, ',', '.') . " EUR";
+                } else {
+                    echo "<br><b>Kurs von " . ucfirst($investment_type) . " nicht verfügbar</b>";
+                }
             }
         } else {
-            echo "<br><b>Fehler beim Abrufen des Kurses</b>";
+            echo "<br><b>Fehler beim Abrufen der Kurse</b>";
         }
     }
-
-        ?>
-
-
-       
-    
+    ?>
       <p><br><br><br><br><br><br><br><br><br><br>asdf<br><br><br><br><br><br><br><br><br><br>asdf<br><br><br><br><br><br><br><br><br><br>asdf</p>
       <h4 id="list-item-3">Live</h4>
       <p><br><br><br><br><br><br><br><br><br><br>asdf<br><br><br><br><br><br><br><br><br><br>asdf<br><br><br><br><br><br><br><br><br><br>asdf</p>

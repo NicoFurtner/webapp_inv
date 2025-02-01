@@ -2,17 +2,18 @@
 session_start();
 require_once 'db.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") { // Wenn eine POST Anfrage gesendet wurde an login.php 
+    // WErte die im Login feld eingetragen wurden werden abgerufen
+    $username = $_POST['username']; 
     $password = $_POST['password'];
 
-    $sql = "SELECT * FROM users WHERE username = :username";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([':username' => $username]);
-    $user = $stmt->fetch();
+    $sql = "SELECT * FROM users WHERE username = :username"; // sql abfrage
+    $stmt = $pdo->prepare($sql); // sql abfrage an pdo übergeben
+    $stmt->execute([':username' => $username]); // Abfrage ausführen und username Wert übergeben
+    $user = $stmt->fetch(); // erste Zeile abrufen der Datenbankergebnisse
 
-    if ($user && password_verify($password, $user['password'])) {
-        $_SESSION['username'] = $user['username'];
+    if ($user && password_verify($password, $user['password'])) { // wenn user gefunden wurde in db und wenn Passwort übereinstimmt (password_verfy() für hash)
+        $_SESSION['username'] = $user['username']; 
         $_SESSION['user_id'] = $user['id']; 
         header("Location: mainpage.php");
         exit();
