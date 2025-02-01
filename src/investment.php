@@ -10,7 +10,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $sql = "INSERT INTO investment (user_id, investment_type, amount, investment_date) 
             VALUES (:user_id, :investment_type, :amount, :investment_date)";
-    
+            
+    // Nach erfolgreichem Hinzufügen eines Investments
+    $_SESSION['last_investment_time'] = time();
+
     $stmt = $pdo->prepare($sql);
     if ($stmt->execute([
         ':user_id' => $user_id,

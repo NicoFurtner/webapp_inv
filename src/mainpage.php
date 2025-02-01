@@ -86,11 +86,16 @@ $investments = $query->fetchAll(); // Zeilen als Array speichern, dann kann man 
         </div>
         </div>
     <?php endif; ?>
-    <br><br>  
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Investment hinzufügen
-    </button>
-    <br><br>
+    <br> 
+    <!-- Button für Investment hinzufügen, nur wenn 60 Sekunden vergangen sind, damit CoinGecko nicht blockiert wegen zu vielen Anfragen -->
+    <?php if (!isset($_SESSION['last_investment_time']) || (time() - $_SESSION['last_investment_time']) >= 60): ?>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Investment hinzufügen
+        </button>
+    <?php elseif ($investment_count > 0): ?>
+        <p class="alert alert-warning">Du kannst nur einmal pro Minute ein Investment hinzufügen!</p>
+    <?php endif; ?>
+    <br>
     <?php 
     if (isset($_SESSION['message'])) { // Ausgabe aus deleteinvestment.php (wenn investment löschen erfolgreich war oder nicht)
         echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
